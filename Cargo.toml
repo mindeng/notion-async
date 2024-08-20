@@ -2,5 +2,24 @@
 name = "notion-async"
 version = "0.1.0"
 edition = "2021"
+license-file = "LICENSE"
+description = "A notion sync tool, in `async` style."
+homepage = "https://github.com/mindeng/notion-async"
+repository = "https://github.com/mindeng/notion-async"
+exclude = [
+    "testdata/*",
+]
+
+[workspace]
 
 [dependencies]
+notion-async-api = { path = "notion-async-api" }
+tokio = { version = "1", features = ["full"] }
+serde_json = "1.0"
+futures = "0.3.30"
+dotenvy = "0.15.7"
+clap = { version = "4.5.16", features = ["derive"] }
+
+[dependencies.sqlx]
+version = "0.8.1"
+features = ["sqlite", "runtime-tokio", "chrono"]
