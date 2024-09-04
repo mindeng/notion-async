@@ -33,7 +33,7 @@ impl NotionError {
 impl Display for NotionError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            NotionError::InvalidObject(s) => write!(f, "invalid notion object: {s}"),
+            NotionError::InvalidObject(s) => format!("invalid notion object: {s}").fmt(f),
             NotionError::RequestFailed(e) => e.fmt(f),
         }
     }

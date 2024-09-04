@@ -6,7 +6,10 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use serde_with::serde_as;
 
-use crate::object::{Object, ObjectCommon};
+use crate::{
+    misc::Unquotes,
+    object::{Object, ObjectCommon},
+};
 
 /// Refer to:
 /// - [Notion JSON conventions](https://developers.notion.com/reference/intro#json-conventions)
@@ -78,7 +81,7 @@ pub enum BlockType {
 impl Display for BlockType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let s = serde_json::to_string(self).unwrap_or("".to_owned());
-        f.write_str(&s)
+        s.unquotes().fmt(f)
     }
 }
 

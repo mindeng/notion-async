@@ -130,33 +130,38 @@ async fn run_sync(token: &str, page_id: &str, db: &mut SqliteConnection) {
                     // println!("⏬ {} {}", obj.object_type(), obj.id());
                     // save_object(&obj, "testdata").await?;
                 } else {
-                    println!("🔁 repeated {} {}", obj.object_type(), obj.id());
+                    eprintln!("➡️ 🔁 repeated {} {}", obj.object_type(), obj.id());
                 }
 
                 match obj {
                     notion_async_api::AnyObject::Block(block) => {
-                        println!("⏬ 🆎 block {} {}", block.id(), block.block_type);
+                        println!(
+                            "✔   {:8} {} {}",
+                            block.object_type(),
+                            block.id(),
+                            block.block_type
+                        );
                         insert_or_update_block(db, block).await.unwrap();
                     }
                     notion_async_api::AnyObject::Page(page) => {
-                        println!("⏬ 📃 page {}", page.id());
+                        println!("✔ 📃 {:8} {}", page.object_type(), page.id());
                         insert_or_update_page(db, page).await.unwrap();
                     }
                     notion_async_api::AnyObject::Database(database) => {
-                        println!("⏬ 🗐 database {}", database.id());
+                        println!("✔   {:8} {}", database.object_type(), database.id());
                         insert_or_update_database(db, database).await.unwrap();
                     }
                     notion_async_api::AnyObject::User(user) => {
-                        println!("⏬ 👤 user {}", user.id());
+                        println!("✔️ 👤 {:8} {}", user.object_type(), user.id());
                     }
                     notion_async_api::AnyObject::Comment(comment) => {
-                        println!("⏬ 📝 comment {}", comment.id(),);
+                        println!("✔   {:8} {}", comment.object_type(), comment.id(),);
                         insert_or_update_comment(db, comment).await.unwrap();
                     }
                 };
             }
             Err(e) => {
-                println!("❌ {e}");
+                eprintln!("❌ error {e}");
             }
         }
     }

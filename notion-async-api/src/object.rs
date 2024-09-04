@@ -7,6 +7,7 @@ use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 use thiserror::Error;
 
+use crate::misc::Unquotes;
 use crate::user::User;
 
 pub trait Object: Send {
@@ -58,7 +59,15 @@ pub enum ObjectType {
 
 impl Display for ObjectType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(&serde_json::to_string(self).unwrap())
+        let s = match self {
+            ObjectType::Block => "block",
+            ObjectType::Page => "page",
+            ObjectType::Database => "database",
+            ObjectType::User => "user",
+            ObjectType::Comment => "comment",
+            ObjectType::List => "list",
+        };
+        s.fmt(f)
     }
 }
 
@@ -150,7 +159,8 @@ pub enum ParentType {
 
 impl Display for ParentType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(&serde_json::to_string(self).unwrap())
+        let s = serde_json::to_string(self).unwrap();
+        s.unquotes().fmt(f)
     }
 }
 
@@ -159,7 +169,7 @@ pub struct ImpossibleParseError;
 
 impl Display for ImpossibleParseError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str("ImpossibleParseError")
+        "ImpossibleParseError".fmt(f)
     }
 }
 
@@ -172,6 +182,6 @@ pub struct JsonObject {
 impl Display for JsonObject {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let s = serde_json::to_string(self).unwrap();
-        f.write_str(&s)
+        s.unquotes().fmt(f)
     }
 }

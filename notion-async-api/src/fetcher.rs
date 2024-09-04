@@ -152,13 +152,17 @@ impl Fetcher {
         async move {
             let (task_tx, mut task_rx) = channel(10);
 
-            this.do_task(task, res_tx.clone(), task_tx).await;
+            {
+                let this = this.clone();
+                let res_tx = res_tx.clone();
+                spawn(async move {
+                    while let Some(task) = task_rx.next().await {
+                        this.do_task_recurs(task, res_tx.clone()).await;
+                    }
+                });
+            }
 
-            spawn(async move {
-                while let Some(task) = task_rx.next().await {
-                    this.do_task_recurs(task, res_tx.clone()).await;
-                }
-            });
+            this.do_task(task, res_tx.clone(), task_tx).await;
         }
         .boxed()
     }

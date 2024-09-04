@@ -1,4 +1,5 @@
 use std::collections::BTreeMap;
+use std::ops::Deref;
 use std::{fmt::Display, str::FromStr};
 
 use chrono::{DateTime, Utc};
@@ -33,7 +34,7 @@ pub enum Icon {
 impl Display for Icon {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let s = serde_json::to_string(self).unwrap();
-        f.write_str(&s)
+        s.unquotes().fmt(f)
     }
 }
 
@@ -47,7 +48,7 @@ pub enum NotionFile {
 impl Display for NotionFile {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let s = serde_json::to_string(self).unwrap();
-        f.write_str(&s)
+        s.unquotes().fmt(f)
     }
 }
 
@@ -69,7 +70,7 @@ impl Display for NotionFileType {
             NotionFileType::File => "file",
             NotionFileType::External => "external",
         };
-        f.write_str(s)
+        s.fmt(f)
     }
 }
 
@@ -104,4 +105,30 @@ pub struct DateProperty {
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 pub struct UrlData {
     url: String,
+}
+
+pub(crate) trait Unquotes {
+    fn unquotes(&self) -> &str;
+}
+
+// impl Unquotes for &str {
+//     fn unquotes(&self) -> String {
+//         let s = match self.strip_prefix("\"").and_then(|x| x.strip_suffix("\"")) {
+//             Some(ss) => ss,
+//             None => self,
+//         };
+//         s.to_owned()
+//     }
+// }
+
+impl<T> Unquotes for T
+where
+    T: Deref<Target = str>,
+{
+    fn unquotes(&self) -> &str {
+        match self.strip_prefix("\"").and_then(|x| x.strip_suffix("\"")) {
+            Some(ss) => ss,
+            None => self,
+        }
+    }
 }

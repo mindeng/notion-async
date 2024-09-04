@@ -41,12 +41,13 @@ impl RequestError {
 
 impl Display for RequestError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            RequestError::InvalidRequest(s) => write!(f, "invalid request: {s}"),
-            RequestError::InvalidResponse(s) => write!(f, "invalid response: {s}"),
-            RequestError::RetryAfter(s) => write!(f, "retry after: {s}"),
-            RequestError::Other(e) => write!(f, "request error: {e:?}"),
-        }
+        let s = match self {
+            RequestError::InvalidRequest(s) => format!("invalid request: {s}"),
+            RequestError::InvalidResponse(s) => format!("invalid response: {s}"),
+            RequestError::RetryAfter(s) => format!("retry after: {s}"),
+            RequestError::Other(e) => format!("request error: {e:?}"),
+        };
+        Display::fmt(&s, f)
     }
 }
 
