@@ -13,7 +13,7 @@ exclude = [
 [workspace]
 
 [dependencies]
-notion-async-api = { path = "notion-async-api" }
+notion-async-api = { version = "0.1", path = "notion-async-api" }
 tokio = { version = "1", features = ["full"] }
 serde_json = "1.0"
 futures = "0.3.30"
