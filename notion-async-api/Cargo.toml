@@ -2,6 +2,10 @@
 name = "notion-async-api"
 version = "0.1.0"
 edition = "2021"
+license-file = "LICENSE"
+description = "A notion client api, in `async` style."
+homepage = "https://github.com/mindeng/notion-async"
+repository = "https://github.com/mindeng/notion-async"
 
 [dependencies]
 reqwest = { version = "0.12", features = ["json"] }
