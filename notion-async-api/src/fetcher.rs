@@ -336,35 +336,6 @@ impl Fetcher {
     }
 }
 
-// async fn handle_object(obj: impl ObjectTrait, mut task_tx: Sender<Task>) {
-//     let id = obj.id();
-//     let task = match obj.object_type() {
-//         ObjectType::Page => Some(Task {
-//             req_type: ReqType::BlockChildren(PaginationInfo::new(id)),
-//         }),
-//         ObjectType::Database => Some(Task {
-//             req_type: ReqType::DatabaseQuery(PaginationInfo::new(id)),
-//         }),
-//         ObjectType::Block => get_task_for_block(obj),
-//         ObjectType::User => None,
-//         ObjectType::Comment => None,
-//         ObjectType::Unknown(_) => {
-//             if obj.has_children {
-//                 Some(Task {
-//                     req_type: ReqType::BlockChildren(PaginationInfo::new(id)),
-//                 })
-//             } else {
-//                 None
-//             }
-//         }
-//         ObjectType::List => todo!(),
-//     };
-
-//     if let Some(task) = task {
-//         task_tx.send(task).await.unwrap();
-//     }
-// }
-
 fn get_task_for_block(block: &Block) -> Option<Task> {
     let block_type = &block.block_type;
     let id = block.id().to_owned();

@@ -21,9 +21,4 @@ mod object;
 mod rich_text;
 
 #[cfg(test)]
-mod tests {
-    // use super::*;
-
-    #[test]
-    fn it_works() {}
-}
+mod tests {}

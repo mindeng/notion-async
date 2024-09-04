@@ -130,64 +130,6 @@ pub enum BlockTypeData {
     Unsupported(BTreeMap<String, Value>),
 }
 
-// #[derive(Debug, Clone)]
-// pub enum ParentType {
-//     Database(String),
-//     Page(String),
-//     Workspace,
-//     Block(String),
-// }
-
-// impl Parent {
-//     #[allow(unused)]
-//     fn id(&self) -> Option<&str> {
-//         match self {
-//             Parent::Database(id) => Some(id),
-//             Parent::Page(id) => Some(id),
-//             Parent::Workspace => None,
-//             Parent::Block(id) => Some(id),
-//         }
-//     }
-// }
-
-// impl TryFrom<&JsonObject> for Parent {
-//     type Error = NotionError;
-//     fn try_from(obj: &JsonObject) -> Result<Self, Self::Error> {
-//         if let Some(t) = obj.get("type").and_then(|x| x.as_str()) {
-//             let parent = match t {
-//                 "database_id" => Parent::Database(
-//                     extract_id_for_type(obj, t)
-//                         .ok_or_else(|| NotionError::key_not_found(t))?
-//                         .to_owned(),
-//                 ),
-//                 "page_id" => Parent::Page(
-//                     extract_id_for_type(obj, t)
-//                         .ok_or_else(|| NotionError::key_not_found(t))?
-//                         .to_owned(),
-//                 ),
-//                 "block_id" => Parent::Block(
-//                     extract_id_for_type(obj, t)
-//                         .ok_or_else(|| NotionError::key_not_found(t))?
-//                         .to_owned(),
-//                 ),
-//                 "workspace" => Parent::Workspace,
-//                 _ => {
-//                     return Err(NotionError::InvalidObject(format!(
-//                         "invalid parent object: {t}",
-//                     )))
-//                 }
-//             };
-//             Ok(parent)
-//         } else {
-//             Err(NotionError::key_not_found("type"))
-//         }
-//     }
-// }
-
-// fn extract_id_for_type<'a>(obj: &'a JsonObject, ttype: &str) -> Option<&'a str> {
-//     obj.get(ttype).and_then(|id| id.as_str())
-// }
-
 impl Object for Block {
     fn id(&self) -> &str {
         &self.obj.id
