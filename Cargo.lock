@@ -1097,7 +1097,7 @@ dependencies = [
 
 [[package]]
 name = "notion-async"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "clap",
  "dotenvy",
@@ -1111,7 +1111,7 @@ dependencies = [
 
 [[package]]
 name = "notion-async-api"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "async-rate-limiter",
  "chrono",

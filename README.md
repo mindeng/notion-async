@@ -2,6 +2,8 @@
 
 A notion sync tool, in `async` style.
 
+![screenshot](images/screenshot.png)
+
 ## Usage
 
 Just set the following environment variables (`.env` file is also supported):
