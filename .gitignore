@@ -1,6 +1,6 @@
 /target
 .DS_Store
-/notion.db
 /.env
 /*.log
 /samples/
+/*.db

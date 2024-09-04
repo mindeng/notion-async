@@ -1102,6 +1102,7 @@ dependencies = [
  "clap",
  "dotenvy",
  "futures",
+ "http",
  "notion-async-api",
  "serde_json",
  "sqlx",

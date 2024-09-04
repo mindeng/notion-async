@@ -1,7 +1,8 @@
-use std::{collections::HashMap, env};
+use std::{collections::HashMap, env, path};
 
 use clap::{Parser, Subcommand};
 use futures::StreamExt;
+use http::Uri;
 use notion_async::{
     init_db, insert_or_update_block, insert_or_update_comment, insert_or_update_database,
     insert_or_update_page,
@@ -14,9 +15,9 @@ use sqlx::SqliteConnection;
 #[command(name = "notion-async")]
 #[command(version = "0.1")]
 struct Cli {
-    /// Notion integration token, can get from:
-    /// https://www.notion.so/my-integrations. If it's not set, will read from
-    /// env var NOTION_TOKEN.
+    /// Notion integration token, can get from
+    /// https://www.notion.so/my-integrations. Read from env var NOTION_TOKEN
+    /// if not set.
     #[arg(long)]
     token: Option<String>,
 
@@ -32,16 +33,15 @@ struct Cli {
 enum Commands {
     /// Sync all pages/databases/comments into db, recursively.
     Sync {
-        /// Specify the root notion page/database ID, can be find in the
-        /// page/database link. If it's not set, will read from env var
-        /// NOTION_ROOT_ID.
-        #[arg(long)]
-        id: Option<String>,
+        /// A LINK or ID of a notion page/database. Everything in it will be
+        /// downloaded, in recursive way. Read from env var NOTION_ROOT_PAGE if
+        /// not set.
+        page: Option<String>,
     },
 }
 
 const NOTION_TOKEN: &str = "NOTION_TOKEN";
-const NOTION_ROOT_ID: &str = "NOTION_ROOT_ID";
+const NOTION_ROOT_PAGE: &str = "NOTION_ROOT_PAGE";
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
@@ -59,17 +59,41 @@ async fn main() -> Result<()> {
 impl Cli {
     async fn run(&self, db: &mut SqliteConnection) -> Result<()> {
         match &self.command {
-            Commands::Sync { id } => {
-                let page_id = match id {
+            Commands::Sync { page } => {
+                let page = match page {
                     Some(id) => id.to_owned(),
                     None => {
-                        let Ok(id) = env::var(NOTION_ROOT_ID) else {
+                        let Ok(id) = env::var(NOTION_ROOT_PAGE) else {
                             return Err(
-                                format!("Neither --id nor env {NOTION_ROOT_ID} is set.").into()
+                                format!("Neither --id nor env {NOTION_ROOT_PAGE} is set.").into()
                             );
                         };
                         id
                     }
+                };
+
+                let page_id = if page.starts_with("https://") {
+                    match page.parse::<Uri>() {
+                        Ok(uri) => {
+                            let p = uri.path();
+                            let p = path::Path::new(p).file_name();
+                            if let Some(last) = p.and_then(|x| x.to_str()) {
+                                if let Some((_, id)) = last.rsplit_once("-") {
+                                    id.to_owned()
+                                } else {
+                                    last.to_owned()
+                                }
+                            } else {
+                                return Err(format!(
+                                    "Can't extract ID from NOTION_ROOT_PAGE, which value is {page}"
+                                )
+                                .into());
+                            }
+                        }
+                        Err(_) => page,
+                    }
+                } else {
+                    page
                 };
 
                 run_sync(&self.get_token()?, &page_id, db).await;
