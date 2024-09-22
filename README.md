@@ -40,6 +40,8 @@ The features will be implemented one by one in order.
 
 - [x] Basic notion async API (`notion-async-api` crate)
 - [x] Sync into sqlite database
+- [ ] Download files/images in notion pages
 - [ ] Simple query
 - [ ] Full-Text search
 - [ ] Export as markdown files
+- [ ] Dockerize
